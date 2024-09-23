@@ -196,36 +196,37 @@ class AbsensiController extends Controller
 
         public function izin()
         {
-            $nama_lengkap = Auth::guard('anggota')->user()->nama_lengkap;
-            $dataizin = DB::table('pengajuan_izin')->where('nama_lengkap', $nama_lengkap)->get();
-            return view('absensi.izin', compact('dataizin'));
+            $nis = Auth::guard('anggota')->user()->nis; // Mendapatkan nama lengkap anggota yang sedang login
+            $dataizin = DB::table('pengajuan_izin')->where('nis', $nis)->get(); // Mengambil data izin berdasarkan nama lengkap
+            return view('absensi.izin', compact('dataizin')); // Mengirim data izin ke tampilan
         }
 
         public function buatizin()
         {         
-            return view('absensi.buatizin');
+            return view('absensi.buatizin'); // Mengirim tampilan untuk membuat izin
         }
 
         public function storeizin(Request $request) 
         {
-            $nama_lengkap = Auth::guard('anggota')->user()->nama_lengkap;
-            $tgl_izin = $request->tgl_izin;
-            $status = $request->status;
-            $keterangan = $request->keterangan;
+            $nis = Auth::guard('anggota')->user()->nis; // Mendapatkan nama lengkap anggota yang sedang login
+            $tgl_izin = $request->tgl_izin; // Mengambil tanggal izin dari request
+            $status = $request->status; // Mengambil status dari request
+            $keterangan = $request->keterangan; // Mengambil keterangan dari request
 
             $data = [
-                'nama_lengkap' => $nama_lengkap,
+                'nis' => $nis,
                 'tgl_izin' => $tgl_izin,
                 'status' => $status,
                 'keterangan' => $keterangan
             ];
 
-            $simpan = DB::table('pengajuan_izin')->insert($data);
+            $simpan = DB::table('pengajuan_izin')->insert($data); // Menyimpan data izin ke tabel pengajuan_izin
 
             if ($simpan) {
-                return redirect('/absensi/izin')->with(['success'=>'Data Berhasil Disimpan']);
+                return redirect('/absensi/izin')->with(['success'=>'Data Berhasil Disimpan']); // Redirect dengan pesan sukses
             } else {
-                return redirect('/absensi/izin')->with(['error'=>'Data Gagal Disimpan']);
+                return redirect('/absensi/izin')->with(['error'=>'Data Gagal Disimpan']); // Redirect dengan pesan error
             }
         }
+
 }

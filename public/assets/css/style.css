@@ -8060,8 +8060,8 @@ body.dark-mode-active .cart-item .cart-item-footer {
   color: white;
   background-image: linear-gradient(
     to bottom right,
-    rgba(184, 13, 45, 1),
-    rgba(184, 13, 45, 0.8)
+    #FEA42E,
+    #FEA42E
   );
 }
 

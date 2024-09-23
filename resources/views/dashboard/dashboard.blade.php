@@ -28,32 +28,33 @@
                 <div class="list-menu">
                     <div class="item-menu text-center">
                         <div class="menu-icon">
-                            <a href="#" class="green" style="font-size: 40px;">
+                            <a href="/editprofile" class="green" style="font-size: 40px;">
                                 <ion-icon name="person-sharp"></ion-icon>
                             </a>
                         </div>
+                        
                         <div class="menu-name">
                             <span class="text-center">Profil</span>
                         </div>
                     </div>
                     <div class="item-menu text-center">
                         <div class="menu-icon">
-                            <a href="#" class="danger" style="font-size: 40px;">
-                                <ion-icon name="calendar-number"></ion-icon>
-                            </a>
-                        </div>
-                        <div class="menu-name">
-                            <span class="text-center">Cuti</span>
-                        </div>
-                    </div>
-                    <div class="item-menu text-center">
-                        <div class="menu-icon">
-                            <a href="#" class="warning" style="font-size: 40px;">
+                            <a href="/absensi/histori" class="danger" style="font-size: 40px;">
                                 <ion-icon name="document-text"></ion-icon>
                             </a>
                         </div>
                         <div class="menu-name">
                             <span class="text-center">Histori</span>
+                        </div>
+                    </div>
+                    <div class="item-menu text-center">
+                        <div class="menu-icon">
+                            <a href="/absensi/izin" class="warning" style="font-size: 40px;">
+                                <ion-icon name="calendar-number"></ion-icon>
+                            </a>
+                        </div>
+                        <div class="menu-name">
+                            <span class="text-center">Izin</span>
                         </div>
                     </div>
                     <div class="item-menu text-center">
@@ -137,7 +138,8 @@
                 <div class="col-3">
                     <div class="card">
                         <div class="card-body text-center" style="padding: 12px 12px !important; line-height:0.8rem">
-                            <span class="badge bg-danger" style="position: absolute; top:3px; right:10px; font-size:0.6rem;">10</span>
+                            <span class="badge bg-danger" style="position: absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">
+                                {{ $rekapizin->jmlizin }}</span>
                             <ion-icon name="newspaper-outline" style="font-size: 1.6rem;" class="text-success mb-1"></ion-icon>
                             <br>
                             <span style="font-size: 0.8rem; font-weight:500">Izin</span>
@@ -147,7 +149,9 @@
                 <div class="col-3">
                     <div class="card">
                         <div class="card-body text-center" style="padding: 12px 12px !important; line-height:0.8rem">
-                            <span class="badge bg-danger" style="position: absolute; top:3px; right:10px; font-size:0.6rem;">10</span>
+                            <span class="badge bg-danger" style="position: absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">
+                                {{ $rekapizin->jmlsakit }}
+                            </span>
                             <ion-icon name="medkit-outline" style="font-size: 1.6rem;" class="text-warning mb-1"></ion-icon>
                             <br>
                             <span style="font-size: 0.8rem; font-weight:500">Sakit</span>
@@ -157,7 +161,8 @@
                 <div class="col-3">
                     <div class="card">
                         <div class="card-body text-center" style="padding: 12px 12px !important; line-height:0.8rem">
-                            <span class="badge bg-danger" style="position: absolute; top:3px; right:10px; font-size:0.6rem;">{{ $rekapabsensi->jmlterlambat }}</span>
+                            <span class="badge bg-danger" style="position: absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">
+                                {{ $rekapizin->jmlsakit }}</span>
                             <ion-icon name="alarm-outline" style="font-size: 1.6rem;" class="text-danger mb-1"></ion-icon>
                             <br>
                             <span style="font-size: 0.8rem; font-weight:500">Telat</span>
@@ -199,7 +204,7 @@
                                 <div class="in">
                                     <div>{{ date('d-m-Y', strtotime($data->tgl_absensi)) }}</div>
                                     <span class="badge badge-success">{{ $data->jam_in }}</span>
-                                    <span class="badge badge-danger">
+                                    <span class="badge badge-warning">
                                         {{ $data->jam_out != null ? $data->jam_out : 'Belum Absen' }}
                                     </span>
                                 </div>
@@ -209,7 +214,7 @@
                     </ul>
                 </div>
 
-                <!-- Tab "Peringkat" -->
+                <!-- Leaderboard" -->
                 <div class="tab-pane fade" id="leaderboard" role="tabpanel">
                     <ul class="listview image-listview">
                         @foreach ($leaderboard as $d)
@@ -223,6 +228,9 @@
                                     </div>
                                     <span class="badge {{ $d->jam_in < '08:00' ? 'bg-success' : 'bg-danger' }}">
                                         {{ $d->jam_in }}
+                                    </span>
+                                    <span class="badge {{ $d->jam_out > '12:00' ? 'bg-success' : 'bg-danger' }}">
+                                        {{ $d->jam_out }}
                                     </span>
                                 </div>
                             </div>

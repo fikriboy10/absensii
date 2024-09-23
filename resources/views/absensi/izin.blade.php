@@ -42,8 +42,19 @@
                 <li>
                     <div class="item">
                         <div>
-                            <b>({{ $d->nama_lengkap}}) ({{ date('d-m-Y', strtotime($d->tgl_izin)) }}) ({{ $d->status== "s" ? "Sakit" : "Izin" }}) </b> <br> <!-- Gunakan tgl_izin untuk tanggal -->
+                            <b>{{ $d->nis}}|{{ date('d-m-Y', strtotime($d->tgl_izin)) }}|{{ $d->status== "s" ? "Sakit" : "Izin" }} </b> <br> <!-- Gunakan tgl_izin untuk tanggal -->
                             <small class="text-muted">{{ $d->keterangan }}</small>
+                        </div>
+                        <div class="row" style="margin-left: 120px">
+                            <div class="col">
+                        @if ($d->status_approved == 0)
+                            <span class="badge bg-warning">Waiting</span>
+                        @elseif ($d->status_approved == 1)
+                            <span class="badge bg-success">Approved</span>
+                        @elseif ($d->status_approved == 2)
+                            <span class="badge bg-danger">Decline</span>
+                        @endif
+                            </div>
                         </div>
                     </div>
                 </li>
