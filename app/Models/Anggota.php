@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,33 +11,34 @@ class Anggota extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    // Menentukan tabel yang digunakan
     protected $table = "anggota";
-    protected $primaryKey = "nis";    
+
+    // Menentukan primary key
+    protected $primaryKey = "nis";
+    
+    // Jika 'nis' bukan auto-increment dan bukan integer
+    public $incrementing = false; 
+    protected $keyType = 'string';
+
+    // Field yang bisa diisi
     protected $fillable = [
         'nis',
         'nama_lengkap',
-        'jurusan',
-        'kelas',
+        'kelas_jurusan',
         'no_hp',
         'password',
     ];
 
-    
+    // Field yang disembunyikan
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    // Cast attribute ke tipe data tertentu
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 }

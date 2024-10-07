@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
+use App\Models\Pengajuanizin;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Redirect;
+
 
 class AbsensiController extends Controller
 {
@@ -22,8 +25,9 @@ class AbsensiController extends Controller
 
         $nis = Auth::guard('anggota')->user()->nis;
         $cek = DB::table('absensi')->where('tgl_absensi', $hariini)->where('nis', $nis)->count();
+        $lok_absen = DB::table('konfigurasi_lokasi')->where('id', 1)->first();
         
-        return view('absensi.create', compact('cek'));
+        return view('absensi.create', compact('cek', 'lok_absen'));
     }
 
     public function store(Request $request) 
@@ -36,8 +40,10 @@ class AbsensiController extends Controller
         $nis = Auth::guard('anggota')->user()->nis;
         $tgl_absensi = date("Y-m-d");
         $jam = date("H:i:s");
-        $latitudelokasi = -6.981115460523293 ; 
-        $longitudelokasi = 107.67425241962124;
+        $lok_absen = DB::table('konfigurasi_lokasi')->where('id', 1)->first();
+        $lok = explode(",", $lok_absen->lokasi_absen);
+        $latitudelokasi = $lok [0]; 
+        $longitudelokasi = $lok [1];
         $lokasi = $request->lokasi;
         $lokasiuser = explode(",", $lokasi);
         $latitudeuser = $lokasiuser[0];
@@ -61,7 +67,7 @@ class AbsensiController extends Controller
 
         // Cek apakah absensi sudah ada
         $cek = DB::table('absensi')->where('tgl_absensi', $tgl_absensi)->where('nis', $nis)->count();
-        if ($radius > 100) {
+        if ($radius > $lok_absen->radius) {
             echo "error|Maaf Anda Sedang Berada Di Luar Jangkauan";
         } else {
         if ($cek > 0) {
@@ -228,5 +234,177 @@ class AbsensiController extends Controller
                 return redirect('/absensi/izin')->with(['error'=>'Data Gagal Disimpan']); // Redirect dengan pesan error
             }
         }
+        public function monitoring()
+        {
+            return view('absensi.monitoring');
+        }
+    
+        public function getabsensi(Request $request)
+        {
+            $tanggal = $request->tanggal;
+            $absensi = DB::table('absensi')
+                ->select('absensi.*', 'nama_lengkap')
+                ->join('anggota', 'absensi.nis', '=', 'anggota.nis')
+                ->where('tgl_absensi', $tanggal)
+                ->get();
+    
+            return view('absensi.getabsensi', compact('absensi'));
+        }
+    
+        public function tampilkanpeta(Request $request)
+        {
+            $id = $request->id;
+            $absensi = DB::table('absensi')->where('id', $id)
+                ->join('anggota', 'absensi.nis', '=', 'anggota.nis')
+                ->first();
+            return view('absensi.showmap', compact('absensi'));
+        }
 
+        public function laporan()
+    {
+        $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        $anggota = DB::table('anggota')->orderBy('nama_lengkap')->get();
+        return view('absensi.laporan', compact('namabulan', 'anggota'));
+    }
+
+    public function cetaklaporan(Request $request)
+    {
+        $nis = $request->nis;
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        $anggota = DB::table('anggota')->where('nis', $nis)
+            
+            ->first();
+
+        $absensi = DB::table('absensi')
+            ->where('nis', $nis)
+            ->whereRaw('MONTH(tgl_absensi)="' . $bulan . '"')
+            ->whereRaw('YEAR(tgl_absensi)="' . $tahun . '"')
+            ->orderBy('tgl_absensi')
+            ->get();
+
+        if (isset($_POST['exportexcel'])) {
+            $time = date("d-M-Y H:i:s");
+            // Fungsi header dengan mengirimkan raw data excel
+            header("Content-type: application/vnd-ms-excel");
+            // Mendefinisikan nama file ekspor "hasil-export.xls"
+            header("Content-Disposition: attachment; filename=Laporan Absensi Anggota $time.xls");
+            return view('absensi.cetaklaporanexcel', compact('bulan', 'tahun', 'namabulan', 'anggota', 'absensi'));
+        }
+        return view('absensi.cetaklaporan', compact('bulan', 'tahun', 'namabulan', 'anggota', 'absensi'));
+    }
+
+    public function rekap()
+    {
+        $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return view('absensi.rekap', compact('namabulan'));
+    }
+
+    public function cetakrekap(Request $request)
+    {
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        $rekap = DB::table('absensi')
+            ->selectRaw('absensi.nis,nama_lengkap,
+                MAX(IF(DAY(tgl_absensi) = 1,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_1,
+                MAX(IF(DAY(tgl_absensi) = 2,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_2,
+                MAX(IF(DAY(tgl_absensi) = 3,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_3,
+                MAX(IF(DAY(tgl_absensi) = 4,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_4,
+                MAX(IF(DAY(tgl_absensi) = 5,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_5,
+                MAX(IF(DAY(tgl_absensi) = 6,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_6,
+                MAX(IF(DAY(tgl_absensi) = 7,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_7,
+                MAX(IF(DAY(tgl_absensi) = 8,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_8,
+                MAX(IF(DAY(tgl_absensi) = 9,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_9,
+                MAX(IF(DAY(tgl_absensi) = 10,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_10,
+                MAX(IF(DAY(tgl_absensi) = 11,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_11,
+                MAX(IF(DAY(tgl_absensi) = 12,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_12,
+                MAX(IF(DAY(tgl_absensi) = 13,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_13,
+                MAX(IF(DAY(tgl_absensi) = 14,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_14,
+                MAX(IF(DAY(tgl_absensi) = 15,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_15,
+                MAX(IF(DAY(tgl_absensi) = 16,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_16,
+                MAX(IF(DAY(tgl_absensi) = 17,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_17,
+                MAX(IF(DAY(tgl_absensi) = 18,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_18,
+                MAX(IF(DAY(tgl_absensi) = 19,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_19,
+                MAX(IF(DAY(tgl_absensi) = 20,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_20,
+                MAX(IF(DAY(tgl_absensi) = 21,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_21,
+                MAX(IF(DAY(tgl_absensi) = 22,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_22,
+                MAX(IF(DAY(tgl_absensi) = 23,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_23,
+                MAX(IF(DAY(tgl_absensi) = 24,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_24,
+                MAX(IF(DAY(tgl_absensi) = 25,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_25,
+                MAX(IF(DAY(tgl_absensi) = 26,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_26,
+                MAX(IF(DAY(tgl_absensi) = 27,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_27,
+                MAX(IF(DAY(tgl_absensi) = 28,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_28,
+                MAX(IF(DAY(tgl_absensi) = 29,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_29,
+                MAX(IF(DAY(tgl_absensi) = 30,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_30,
+                MAX(IF(DAY(tgl_absensi) = 31,CONCAT(jam_in,"-",IFNULL(jam_out,"00:00:00")),"")) as tgl_31')
+            ->join('anggota', 'absensi.nis', '=', 'anggota.nis')
+            ->whereRaw('MONTH(tgl_absensi)="' . $bulan . '"')
+            ->whereRaw('YEAR(tgl_absensi)="' . $tahun . '"')
+            ->groupByRaw('absensi.nis,nama_lengkap')
+            ->get();
+
+        if (isset($_POST['exportexcel'])) {
+            $time = date("d-M-Y H:i:s");
+            // Fungsi header dengan mengirimkan raw data excel
+            header("Content-type: application/vnd-ms-excel");
+            // Mendefinisikan nama file ekspor "hasil-export.xls"
+            header("Content-Disposition: attachment; filename=Rekap Absensi Anggota $time.xls");
+        }
+        return view('absensi.cetakrekap', compact('bulan', 'tahun', 'namabulan', 'rekap'));
+    }
+
+    public function izinsakit(Request $request)
+    {
+
+        $query = Pengajuanizin::query();
+        $query->select('id', 'tgl_izin', 'pengajuan_izin.nis', 'nama_lengkap', 'kelas_jurusan', 'status', 'status_approved', 'keterangan');
+        $query->join('anggota', 'pengajuan_izin.nis', '=', 'anggota.nis');
+        if (!empty($request->dari) && !empty($request->sampai)) {
+            $query->whereBetween('tgl_izin', [$request->dari, $request->sampai]);
+        }
+
+        if (!empty($request->nis)) {
+            $query->where('pengajuan_izin.nis', $request->nis);
+        }
+
+        if (!empty($request->nama_lengkap)) {
+            $query->where('nama_lengkap', 'like', '%' . $request->nama_lengkap . '%');
+        }
+
+        if ($request->status_approved === '0' || $request->status_approved === '1' || $request->status_approved === '2') {
+            $query->where('status_approved', $request->status_approved);
+        }
+        $query->orderBy('tgl_izin', 'desc');
+        $izinsakit = $query->paginate(2);
+        $izinsakit->appends($request->all());
+        return view('absensi.izinsakit', compact('izinsakit'));
+    }
+
+    public function approveizinsakit(Request $request)
+    {
+        $status_approved = $request->status_approved;
+        $id_izinsakit_form = $request->id_izinsakit_form;
+        $update = DB::table('pengajuan_izin')->where('id', $id_izinsakit_form)->update([
+            'status_approved' => $status_approved
+        ]);
+        if ($update) {
+            return Redirect::back()->with(['success' => 'Data Berhasil Di Update']);
+        } else {
+            return Redirect::back()->with(['warning' => 'Data Gagal Di Update']);
+        }
+    }
+
+    public function batalkanizinsakit($id)
+    {
+        $update = DB::table('pengajuan_izin')->where('id', $id)->update([
+            'status_approved' => 0
+        ]);
+        if ($update) {
+            return Redirect::back()->with(['success' => 'Data Berhasil Di Update']);
+        } else {
+            return Redirect::back()->with(['warning' => 'Data Gagal Di Update']);
+        }
+    }
 }

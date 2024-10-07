@@ -17,7 +17,7 @@
             </div>
             <div id="user-info">
                 <h2 id="user-name">{{ Auth::guard('anggota')->user()->nama_lengkap }}</h2>
-                <span id="user-role">{{ Auth::guard('anggota')->user()->jurusan }}</span>
+                <span id="user-role">{{ Auth::guard('anggota')->user()->kelas_jurusan }}</span>
             </div>
         </div>
     </div>
@@ -224,7 +224,7 @@
                                 <div class="in">
                                     <div>
                                         <b>{{ $d->nama_lengkap }}</b> <br>
-                                        <small class="text-muted">{{ $d->jurusan }}</small>
+                                        <small class="text-muted"> {{ $d->kelas_jurusan }}</small>
                                     </div>
                                     <span class="badge {{ $d->jam_in < '08:00' ? 'bg-success' : 'bg-danger' }}">
                                         {{ $d->jam_in }}

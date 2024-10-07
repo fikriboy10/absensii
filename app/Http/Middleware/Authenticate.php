@@ -2,23 +2,24 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
-
 
 class Authenticate extends Middleware
 {
     /**
-     * Handle an incoming request.
+     * Get the path the user should be redirected to when they are not authenticated.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @return string|null
      */
-    public function redirectTo( $request)
+    protected function redirectTo($request)
     {
         if (!$request->expectsJson()) {
-            return route('login');
+            if (request()->is('panel/*')) {
+                return route('loginadmin');
+            } else {
+                return route('login');
+            }
         }
-       
     }
 }

@@ -71,4 +71,22 @@ class DashboardController extends Controller
             'bulanini', 'tahunini', 'rekapabsensi', 'leaderboard', 'rekapizin'
         ));
     }
+
+    public function dashboardadmin()
+    {
+        $hariini = date("Y-m-d");
+        $rekapabsensi = DB::table('absensi')
+            ->selectRaw('COUNT(nis) as jmlhadir, SUM(IF(jam_in > "08:00",1,0)) as jmlterlambat')
+            ->where('tgl_absensi', $hariini)
+            ->first();
+
+        $rekapizin = DB::table('pengajuan_izin')
+            ->selectRaw('SUM(IF(status="i",1,0)) as jmlizin,SUM(IF(status="s",1,0)) as jmlsakit')
+            ->where('tgl_izin', $hariini)
+            ->where('status_approved', 1)
+            ->first();
+
+
+        return view('dashboard.dashboardadmin', compact('rekapabsensi', 'rekapizin'));
+    }
 }

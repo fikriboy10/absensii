@@ -48,11 +48,11 @@
                         <div class="row" style="margin-left: 120px">
                             <div class="col">
                         @if ($d->status_approved == 0)
-                            <span class="badge bg-warning">Waiting</span>
+                            <span class="badge bg-warning">Harap Tunggu</span>
                         @elseif ($d->status_approved == 1)
-                            <span class="badge bg-success">Approved</span>
+                            <span class="badge bg-success">Disetujui</span>
                         @elseif ($d->status_approved == 2)
-                            <span class="badge bg-danger">Decline</span>
+                            <span class="badge bg-danger">Ditolak</span>
                         @endif
                             </div>
                         </div>
