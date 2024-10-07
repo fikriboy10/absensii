@@ -74,6 +74,31 @@
                 format: "yyyy-mm-dd"               
             });
             
+            $("#tgl_izin").change(function(e) {
+                var tgl_izin = $(this).val(); // Menyimpan nilai tanggal izin yang dipilih
+
+                $.ajax({
+                    type: "POST", // Metode pengiriman data (POST)
+                    url: "/absensi/cekpengajuanizin", // URL untuk memproses pengecekan izin
+                    data: {
+                        _token: "{{ csrf_token() }}", // Token CSRF untuk keamanan (biasanya pada Laravel)
+                        tgl_izin: tgl_izin // Mengirimkan nilai tanggal izin
+                    },
+                    cache: false, // Menonaktifkan cache
+                    success: function(respond) {
+                        if (respond == 1) {
+                        Swal.fire({
+                        title: 'Oops !',
+                        text: 'Anda Sudah Melakukan Izin Pada Tanggal Tersebut! ',
+                        icon: 'warning',           
+                        }).then((result)=> {
+                            $("#tgl_izin").val("");
+                        });
+                        }
+                    }
+                });
+            });
+
                 $("#formizin").submit(function(){
                 var tgl_izin = $("#tgl_izin").val();
                 var status = $("#status").val();

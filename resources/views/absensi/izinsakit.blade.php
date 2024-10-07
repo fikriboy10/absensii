@@ -19,7 +19,7 @@
     <div class="container-xl">
         <div class="row">
             <div class="col-12">
-                <form action="/presensi/izinsakit" method="GET" autocomplete="off">
+                <form action="/absensi/izinsakit" method="GET" autocomplete="off">
                     <div class="row">
                         <div class="col-6">
                             <div class="input-icon mb-3">

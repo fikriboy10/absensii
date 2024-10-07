@@ -377,7 +377,7 @@ class AbsensiController extends Controller
             $query->where('status_approved', $request->status_approved);
         }
         $query->orderBy('tgl_izin', 'desc');
-        $izinsakit = $query->paginate(2);
+        $izinsakit = $query->paginate(3);
         $izinsakit->appends($request->all());
         return view('absensi.izinsakit', compact('izinsakit'));
     }
@@ -406,5 +406,13 @@ class AbsensiController extends Controller
         } else {
             return Redirect::back()->with(['warning' => 'Data Gagal Di Update']);
         }
+    }
+    public function cekpengajuanizin(Request $request)
+    {
+        $tgl_izin = $request->tgl_izin;
+        $nis = Auth::guard('anggota')->user()->nis;
+
+        $cek = DB::table('pengajuan_izin')->where('nis', $nis)->where('tgl_izin', $tgl_izin)->count();
+        return $cek;
     }
 }

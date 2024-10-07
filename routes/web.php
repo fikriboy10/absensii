@@ -49,6 +49,7 @@ Route::middleware(['auth:anggota'])->group(function () {
     Route::get('/absensi/izin', [AbsensiController::class, 'izin']);
     Route::get('/absensi/buatizin', [AbsensiController::class, 'buatizin']);
     Route::post('/absensi/storeizin', [AbsensiController::class, 'storeizin']);
+    Route::post('/absensi/cekpengajuanizin', [AbsensiController::class, 'cekpengajuanizin']);
 });
     // Admin
    Route::middleware(['auth:user'])->group(function () {
