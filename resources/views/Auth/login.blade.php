@@ -155,18 +155,34 @@
                         </div>
                     </div>
 
-                    <div class="form-group boxed">
+                    <div class="form-group boxed" style="position: relative;">
                         <div class="input-wrapper">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                            <i class="clear-input">
-                                <ion-icon name="close-circle"></ion-icon>
-                            </i>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" style="padding-right: 50px; height: 50px; line-height: 50px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" id="eye-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6c757d;" onclick="togglePasswordVisibility()">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" />
+                            </svg>
                         </div>
                     </div>
+                    
+                    <script>
+                    function togglePasswordVisibility() {
+                        const passwordInput = document.getElementById('password');
+                        if (passwordInput.type === 'password') {
+                            passwordInput.type = 'text';  // Show password
+                        } else {
+                            passwordInput.type = 'password';  // Hide password
+                        }
+                    }
+                    </script>
+                    
+                    
+                    
+                    
+                    
+                    
 
-                    {{-- <div class="form-links mt-2">
-                        <div><a href="page-forgot-password.html" class="text-muted">Forgot Password?</a></div>
-                    </div> --}}
 
                     <div class="form-button-group">
                         <button type="submit" class="btn btn-primary btn-block btn-lg">Log in</button>

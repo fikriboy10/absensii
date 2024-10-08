@@ -44,7 +44,7 @@
                         </div>
                         <div class="card card-md">
                             <div class="card-body">
-                                <h2 class="h2 text-center mb-4">Login to your account</h2>
+                                <h2 class="h2 text-center mb-4">Login Gaes</h2>
                                 @if (Session::get('warning'))
                                 <div class="alert alert-warning">
                                     <p>{{ Session::get('warning') }}</p>
@@ -53,37 +53,52 @@
                                 <form action="/prosesloginadmin" method="post" autocomplete="off" novalidate>
                                     @csrf
                                     <div class="mb-3">
-                                        <label class="form-label">Email address</label>
-                                        <input type="email" name="email" class="form-control" placeholder="your@email.com" autocomplete="off">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" name="email" class="form-control" placeholder="email" autocomplete="off">
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">
                                             Password
-                                            <span class="form-label-description">
+                                            {{-- <span class="form-label-description">
                                                 <a href="./forgot-password.html">I forgot password</a>
-                                            </span>
+                                            </span> --}}
                                         </label>
                                         <div class="input-group input-group-flat">
-                                            <input type="password" name="password" class="form-control" placeholder="Your password" autocomplete="off">
+                                            <input type="password" id="password" name="password" class="form-control" placeholder="Your password" autocomplete="off">
                                             <span class="input-group-text">
-                                                <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
+                                                <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip" onclick="togglePasswordVisibility()">
                                                     <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" id="eye-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                                                         <path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                                        <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
+                                                        <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" />
+                                                    </svg>
                                                 </a>
                                             </span>
                                         </div>
                                     </div>
+                                    
+                                    <script>
+                                    function togglePasswordVisibility() {
+                                        const passwordInput = document.getElementById('password');
+                                        const eyeIcon = document.getElementById('eye-icon');
+                                        
+                                        if (passwordInput.type === 'password') {
+                                            passwordInput.type = 'text';  // Show password
+                                        } else {
+                                            passwordInput.type = 'password';  // Hide password
+                                        }
+                                    }
+                                    </script>
+                                    
                                     <div class="mb-2">
                                         <label class="form-check">
                                             <input type="checkbox" class="form-check-input" />
-                                            <span class="form-check-label">Remember me on this device</span>
+                                            <span class="form-check-label">Remember me</span>
                                         </label>
                                     </div>
                                     <div class="form-footer">
-                                        <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                                        <button type="submit" class="btn btn-primary w-100">Log in</button>
                                     </div>
                                 </form>
                             </div>
@@ -93,7 +108,7 @@
                     </div>
                 </div>
                 <div class="col-lg d-none d-lg-block">
-                    <img src="{{ asset('tabler/static/illustrations/undraw_secure_login_pdn4.svg') }}" height="300" class="d-block mx-auto" alt="">
+                    <img src="{{ asset('tabler/static/illustrations/1.png') }}" height="300" class="d-block mx-auto" alt="">
                 </div>
             </div>
         </div>

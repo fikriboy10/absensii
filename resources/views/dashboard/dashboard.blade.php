@@ -1,9 +1,31 @@
 @extends('layouts.absensi')
 
 @section('content')
+<style>
+    .logout {
+        position: absolute;
+        color: white;
+        font-size: 30px;
+        text-decoration: none;
+        right: 8px;
+    }
+
+    .logout:hover {
+        color: white;
+
+    }
+
+    .image-listview>li .item {
+        min-height: 80px !important;
+        border-radius: 20px !important;
+    }
+</style>
 <!-- App Capsule -->
 <div id="appCapsule">
     <div class="section" id="user-section">
+        <a href="/proseslogout" class="logout">
+            <ion-icon name="exit-outline"></ion-icon>
+        </a>
         <div id="user-detail">
             <div class="avatar">
                 @if (!empty(Auth::guard('anggota')->user()->foto))
@@ -57,7 +79,7 @@
                             <span class="text-center">Izin</span>
                         </div>
                     </div>
-                    <div class="item-menu text-center">
+                    {{-- <div class="item-menu text-center">
                         <div class="menu-icon">
                             <a href="#" class="orange" style="font-size: 40px;">
                                 <ion-icon name="location"></ion-icon>
@@ -66,7 +88,7 @@
                         <div class="menu-name">
                             <span class="text-center">Lokasi</span>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
@@ -122,7 +144,9 @@
             </div>
         </div>
 
-        <div id="rekapabsensi">
+
+        
+        {{-- <div id="rekapabsensi">
             <h3>Rekap Absensi Bulan {{ $namabulan[$bulanini] ?? 'Bulan Ini' }} Tahun {{ $tahunini }}</h3>
             <div class="row">
                 <div class="col-3">
@@ -161,14 +185,15 @@
                 <div class="col-3">
                     <div class="card">
                         <div class="card-body text-center" style="padding: 12px 12px !important; line-height:0.8rem">
-                            <span class="badge bg-danger" style="position: absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">
-                                {{ $rekapizin->jmlsakit }}</span>
+                            @if (!empty($rekap_absensi->jmlterlambat))
+                                <span class="badge bg-danger"
+                                    style="position: absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekap_absensi->jmlterlambat }}</span>
+                            @endif
                             <ion-icon name="alarm-outline" style="font-size: 1.6rem;" class="text-danger mb-1"></ion-icon>
                             <br>
                             <span style="font-size: 0.8rem; font-weight:500">Telat</span>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
         <!--OPSIONAL-->
@@ -241,6 +266,6 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 <!-- * App Capsule -->
 @endsection
