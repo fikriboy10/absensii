@@ -45,6 +45,23 @@
     </div>
 
     <div class="section" id="menu-section">
+        <div class="card bg-grey">
+            <div class="card-body d-flex align-items-center">
+                <!-- Gambar di sebelah kiri -->
+                <div class="item-menu text-center">
+                    <img src="{{ asset('assets/img/h.jpg') }}" style="width: 80px; height: 80px; border-radius: 50%;">
+                </div>
+                <!-- Teks di sebelah kanan -->
+                <div class="item-menu text-center ml-3">
+                    <h3 class="font-weight-bold">ABSENSI PMR WIRA SMKN 1 KAWALI</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    {{-- <div class="section" id="menu-section">
         <div class="card">
             <div class="card-body text-center">
                 <div class="list-menu">
@@ -79,7 +96,7 @@
                             <span class="text-center">Izin</span>
                         </div>
                     </div>
-                    {{-- <div class="item-menu text-center">
+                    <div class="item-menu text-center">
                         <div class="menu-icon">
                             <a href="#" class="orange" style="font-size: 40px;">
                                 <ion-icon name="location"></ion-icon>
@@ -88,11 +105,11 @@
                         <div class="menu-name">
                             <span class="text-center">Lokasi</span>
                         </div>
-                    </div> --}}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="section mt-2" id="presence-section">
         <div class="todaypresence">
@@ -146,7 +163,7 @@
 
 
         
-        {{-- <div id="rekapabsensi">
+        <div id="rekapabsensi">
             <h3>Rekap Absensi Bulan {{ $namabulan[$bulanini] ?? 'Bulan Ini' }} Tahun {{ $tahunini }}</h3>
             <div class="row">
                 <div class="col-3">
@@ -184,20 +201,24 @@
                 </div>
                 <div class="col-3">
                     <div class="card">
-                        <div class="card-body text-center" style="padding: 12px 12px !important; line-height:0.8rem">
-                            @if (!empty($rekap_absensi->jmlterlambat))
-                                <span class="badge bg-danger"
-                                    style="position: absolute; top:3px; right:10px; font-size:0.6rem; z-index:999">{{ $rekap_absensi->jmlterlambat }}</span>
+                        <div class="card-body text-center" style="padding: 12px; line-height: 0.8rem;">
+                            @if (!empty($rekapabsensi->jmlterlambat))
+
+                                <span class="badge bg-danger" 
+                                      style="position: absolute; top: 3px; right: 10px; font-size: 0.6rem; z-index: 999;">
+                                    {{ $rekapabsensi->jmlterlambat }}
+                                </span>
                             @endif
-                            <ion-icon name="alarm-outline" style="font-size: 1.6rem;" class="text-danger mb-1"></ion-icon>
+                            <ion-icon name="alarm-outline" class="text-danger mb-1" style="font-size: 1.6rem;"></ion-icon>
                             <br>
-                            <span style="font-size: 0.8rem; font-weight:500">Telat</span>
+                            <span style="font-size: 0.8rem; font-weight: 500;">Telat</span>
                         </div>
                     </div>
-            </div>
+                </div>
+                
         </div>
         <!--OPSIONAL-->
-        <div class="presencetab mt-2">
+        {{-- <div class="presencetab mt-2">
             <div class="tab-pane fade show active" id="pilled" role="tabpanel">
                 <ul class="nav nav-tabs style1" role="tablist">
                     <li class="nav-item">
@@ -211,9 +232,9 @@
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div> --}}
 
-            <div class="tab-content mt-2" style="margin-bottom:100px;">
+            {{-- <div class="tab-content mt-2" style="margin-bottom:100px;">
                 <!-- Tab "Bulan Ini" -->
                 <div class="tab-pane fade show active" id="home" role="tabpanel">
                     <ul class="listview image-listview">

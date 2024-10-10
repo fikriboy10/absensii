@@ -129,7 +129,7 @@
 
         <div class="login-form mt-1">
             <div class="section">
-                <img src="{{ asset('assets/img/1.png') }}" alt="image" class="form-image">
+                <img src="{{ asset('assets/img/h.jpg') }}" alt="image" class="form-image">
             </div>
             <div class="section mt-1">
                 <h1>Absen Guys</h1>
