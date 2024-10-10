@@ -100,7 +100,7 @@
                       </div>
                       <div class="col">
                         <div class="font-weight-medium">
-                            {{ $rekapabsensi->jmlterlambat }}
+                            {{ $rekapabsensi->jmlterlambat != null ? $rekapabsensi->jmlterlambat: 0 }}
                         </div>
                         <div class="text-secondary">
                           Anggota Terlambat
